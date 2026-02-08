@@ -39,6 +39,7 @@ jobs:
 
       - name: Deploy contract
         env:
+          # Explicitly passing secrets to environment variables
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
           BSC_RPC_URL: ${{ secrets.BSC_RPC_URL }}
@@ -46,5 +47,7 @@ jobs:
           BASE_RPC_URL: ${{ secrets.BASE_RPC_URL }}
           TRUSTED_FORWARDER: ${{ secrets.TRUSTED_FORWARDER }}
         run: |
-          NETWORK=${{ github.event.inputs.network || 'sepolia' }}
-          npx hardhat run scripts/deploy.js --network $NETWORK
+          # Use manual network input or default to sepolia
+          DEPLOY_NETWORK=${{ github.event.inputs.network || 'sepolia' }}
+          echo "Initiating deployment to $DEPLOY_NETWORK..."
+          npx hardhat run scripts/deploy.js --network $DEPLOY_NETWORK
