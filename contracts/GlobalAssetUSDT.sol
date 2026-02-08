@@ -7,20 +7,27 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
 /**
- * @title SecurityUSDT
- * @dev ERC20 token with EIP-2612 permit and GSN support (EIP-2771).
- * This allows for gasless transactions where a relayer pays the gas fees.
+ * @title GlobalAssetUSDT
+ * @dev ERC20 token simulating USDT with EIP-2612 Permit and EIP-2771 Meta-Transactions.
+ * Part of the Global Asset Simulator turnkey solution for Red-Teaming research.
  */
-contract SecurityUSDT is ERC20, ERC20Permit, Ownable, ERC2771Context {
+contract GlobalAssetUSDT is ERC20, ERC20Permit, Ownable, ERC2771Context {
 
     constructor(address trustedForwarder)
-        ERC20("Security USDT", "sUSDT")
-        ERC20Permit("Security USDT")
+        ERC20("Tether USD", "USDT")
+        ERC20Permit("Tether USD")
         Ownable(msg.sender)
         ERC2771Context(trustedForwarder)
     {
-        // Mint initial supply to the deployer
-        _mint(msg.sender, 1000000 * 10**decimals());
+        // Initial supply: 1,000,000,000 USDT (6 decimals)
+        _mint(msg.sender, 1000000000 * 10**decimals());
+    }
+
+    /**
+     * @dev USDT typically uses 6 decimals.
+     */
+    function decimals() public view virtual override returns (uint8) {
+        return 6;
     }
 
     /**

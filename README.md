@@ -1,70 +1,69 @@
-# Web3 Security Automation Platform (منصة أتمتة أمن الويب 3)
+# Global Asset Simulator
 
-This is a turnkey solution for building and testing Web3 Security Automation with Gasless Transactions (Meta-transactions).
+The **Global Asset Simulator** is a turnkey Web3 security research solution designed for Red-Teaming environments. It provides a highly realistic simulation of the USDT (Tether USD) protocol, integrated with advanced features like EIP-2612 (Permit) and EIP-2771 (Meta-Transactions) to enable gasless operations.
 
-هذا المشروع هو حل متكامل يتضمن عقوداً ذكية، نظام ترحيل (Relayer)، وواجهة أمامية لدراسة وتنفيذ العمليات عديمة الغاز.
+## Features
 
-## Components
+- **Multi-Chain Support**: Ready-to-deploy on Sepolia, BNB Smart Chain, Polygon, and Base.
+- **Gasless Transactions**: Integrated with `ERC2771Context` and a dedicated `SecurityForwarder` to allow users to interact with the contract without paying gas fees.
+- **USDT Simulation**: Mimics USDT metadata (6 decimals, "Tether USD" name, "USDT" symbol) for realistic testing.
+- **EIP-2612 Permit**: Allows for signature-based approvals, reducing friction and gas usage.
+- **Autonomous CI/CD**: Automatic compilation and deployment via GitHub Actions.
 
-1.  **Smart Contracts (`/contracts`)**:
-    *   `SecurityUSDT.sol`: An ERC20 token implementing EIP-2612 (Permit) and GSN support (EIP-2771).
-    *   `SecurityForwarder.sol`: A trusted forwarder for executing meta-transactions.
-2.  **Deployment Automation (`/.github/workflows`)**:
-    *   GitHub Actions workflow for automated deployment to Sepolia testnet.
-3.  **Gasless Relayer (`/relayer`)**:
-    *   A Node.js Express server that acts as a relayer, paying for gas on behalf of users.
-4.  **Frontend (`/frontend`)**:
-    *   A React application for interacting with the contracts and sending gasless transactions.
+## Project Structure
 
-## Getting Started
+- `contracts/GlobalAssetUSDT.sol`: The core ERC20 token simulating USDT.
+- `contracts/SecurityForwarder.sol`: The EIP-2771 trusted forwarder.
+- `scripts/deploy.js`: Automated deployment script with network detection.
+- `hardhat.config.js`: Multi-chain infrastructure configuration.
+- `.github/workflows/deploy.yml`: CI/CD pipeline for automated deployments.
 
-### 1. Smart Contracts & Deployment
+## Setup & Deployment
 
-1.  Install dependencies:
-    ```bash
-    npm install
-    ```
-2.  Copy `.env.example` to `.env` and fill in your details:
-    *   `PRIVATE_KEY`: Your deployment wallet private key.
-    *   `SEPOLIA_RPC_URL`: Your Alchemy/Infura RPC URL.
-    *   `TRUSTED_FORWARDER`: Leave empty to deploy a new one.
-3.  Deploy:
-    ```bash
-    npx hardhat run scripts/deploy.js --network sepolia
-    ```
+### Prerequisites
 
-### 2. Gasless Relayer
+- Node.js (v20+)
+- NPM
 
-1.  Navigate to `relayer/`:
-    ```bash
-    cd relayer
-    npm install
-    ```
-2.  Copy `.env.example` to `.env` and fill in your details (Relayer needs funds to pay for gas).
-3.  Start the relayer:
-    ```bash
-    node server.js
-    ```
+### Installation
 
-### 3. Frontend
+```bash
+npm install
+```
 
-1.  Navigate to `frontend/`:
-    ```bash
-    cd frontend
-    npm install
-    ```
-2.  Copy `.env.example` to `.env` and fill in the deployed contract addresses.
-3.  Start the app:
-    ```bash
-    npm start
-    ```
+### Configuration
 
-## Security Research
+Create a `.env` file in the root directory and add the following:
 
-This platform is designed for studying:
-*   Meta-transaction vulnerabilities (e.g., signature replay, front-running).
-*   Gasless UX improvements.
-*   EIP-712 typed data signing.
+```env
+PRIVATE_KEY=your_private_key
+SEPOLIA_RPC_URL=https://rpc.sepolia.org
+BSC_RPC_URL=https://bsc-dataseed.binance.org/
+POLYGON_RPC_URL=https://polygon-rpc.com
+BASE_RPC_URL=https://mainnet.base.org
+TRUSTED_FORWARDER=0x... (optional)
+```
+
+### Manual Deployment
+
+To deploy to a specific network:
+
+```bash
+npx hardhat run scripts/deploy.js --network <network_name>
+```
+
+Replace `<network_name>` with `sepolia`, `bsc`, `polygon`, or `base`.
+
+### Running Tests
+
+```bash
+npm test
+```
+
+## Security Note
+
+This project is intended for **security research and red-teaming environments only**. It allows for the simulation of asset transfers and permit-based attacks to test the resilience of digital wallets and security monitoring systems.
 
 ## License
+
 MIT

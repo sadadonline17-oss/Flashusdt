@@ -1,27 +1,33 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("SecurityUSDT Gasless Transactions", function () {
+describe("GlobalAssetUSDT (USDT Simulator)", function () {
   let token, forwarder, owner, user, recipient;
 
   beforeEach(async function () {
     [owner, user, recipient] = await ethers.getSigners();
 
-    const SecurityForwarder = await ethers.getContractFactory("SecurityForwarder");
-    forwarder = await SecurityForwarder.deploy();
+    const GlobalAssetForwarder = await ethers.getContractFactory("GlobalAssetForwarder");
+    forwarder = await GlobalAssetForwarder.deploy();
     await forwarder.waitForDeployment();
 
-    const SecurityUSDT = await ethers.getContractFactory("SecurityUSDT");
-    token = await SecurityUSDT.deploy(await forwarder.getAddress());
+    const GlobalAssetUSDT = await ethers.getContractFactory("GlobalAssetUSDT");
+    token = await GlobalAssetUSDT.deploy(await forwarder.getAddress());
     await token.waitForDeployment();
 
     // Give some tokens to user
-    await token.mint(user.address, ethers.parseUnits("1000", 18));
+    await token.mint(user.address, ethers.parseUnits("1000", 6));
+  });
+
+  it("should have correct name, symbol and decimals", async function () {
+    expect(await token.name()).to.equal("Tether USD");
+    expect(await token.symbol()).to.equal("USDT");
+    expect(await token.decimals()).to.equal(6);
   });
 
   it("should allow a gasless transfer via the Forwarder", async function () {
     const initialBalance = await token.balanceOf(recipient.address);
-    const amount = ethers.parseUnits("100", 18);
+    const amount = ethers.parseUnits("100", 6);
 
     const data = token.interface.encodeFunctionData("transfer", [recipient.address, amount]);
     const nonce = await forwarder.nonces(user.address);
@@ -29,7 +35,7 @@ describe("SecurityUSDT Gasless Transactions", function () {
     const deadline = Math.floor(Date.now() / 1000) + 3600;
 
     const domain = {
-      name: "SecurityForwarder",
+      name: "GlobalAssetForwarder",
       version: "1",
       chainId: chainId,
       verifyingContract: await forwarder.getAddress(),
@@ -73,17 +79,17 @@ describe("SecurityUSDT Gasless Transactions", function () {
     await forwarder.connect(owner).execute(forwardRequest);
 
     expect(await token.balanceOf(recipient.address)).to.equal(initialBalance + amount);
-    expect(await token.balanceOf(user.address)).to.equal(ethers.parseUnits("900", 18));
+    expect(await token.balanceOf(user.address)).to.equal(ethers.parseUnits("900", 6));
   });
 
   it("should support EIP-2612 permit", async function () {
-    const amount = ethers.parseUnits("50", 18);
+    const amount = ethers.parseUnits("50", 6);
     const deadline = Math.floor(Date.now() / 1000) + 3600;
     const nonce = await token.nonces(user.address);
     const chainId = (await ethers.provider.getNetwork()).chainId;
 
     const domain = {
-      name: "Security USDT",
+      name: "Tether USD",
       version: "1",
       chainId: chainId,
       verifyingContract: await token.getAddress(),

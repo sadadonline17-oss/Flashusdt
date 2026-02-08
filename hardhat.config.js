@@ -20,5 +20,17 @@ module.exports = {
       url: process.env.SEPOLIA_RPC_URL || "https://rpc.sepolia.org",
       accounts: accounts,
     },
+    bsc: {
+      url: process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org/",
+      accounts: accounts,
+    },
+    polygon: {
+      url: process.env.POLYGON_RPC_URL || "https://polygon-rpc.com",
+      accounts: accounts,
+    },
+    base: {
+      url: process.env.BASE_RPC_URL || "https://mainnet.base.org",
+      accounts: accounts,
+    }
   },
 };
