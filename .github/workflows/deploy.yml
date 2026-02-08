@@ -37,6 +37,33 @@ jobs:
       - name: Compile contracts
         run: npx hardhat compile
 
+      - name: Validate Secrets
+        run: |
+          MISSING_SECRETS=0
+          if [ -z "${{ secrets.PRIVATE_KEY }}" ]; then
+            echo "::error::PRIVATE_KEY secret is missing. This is required for deployment."
+            MISSING_SECRETS=1
+          fi
+
+          NETWORK=${{ github.event.inputs.network || 'sepolia' }}
+          echo "Target Network: $NETWORK"
+
+          # Check for network-specific RPC URL
+          case $NETWORK in
+            sepolia) RPC_URL_SECRET="${{ secrets.SEPOLIA_RPC_URL }}" ;;
+            bsc) RPC_URL_SECRET="${{ secrets.BSC_RPC_URL }}" ;;
+            polygon) RPC_URL_SECRET="${{ secrets.POLYGON_RPC_URL }}" ;;
+            base) RPC_URL_SECRET="${{ secrets.BASE_RPC_URL }}" ;;
+          esac
+
+          if [ -z "$RPC_URL_SECRET" ]; then
+            echo "::warning::RPC URL for $NETWORK is missing. Hardhat will use the fallback URL."
+          fi
+
+          if [ $MISSING_SECRETS -eq 1 ]; then
+            exit 1
+          fi
+
       - name: Deploy contract
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
