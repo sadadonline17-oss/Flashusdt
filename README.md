@@ -4,6 +4,8 @@ This is a turnkey solution for building and testing Web3 Security Automation wit
 
 هذا المشروع هو حل متكامل يتضمن عقوداً ذكية، نظام ترحيل (Relayer)، وواجهة أمامية لدراسة وتنفيذ العمليات عديمة الغاز.
 
+يتم تشغيل الاختبارات تلقائياً عبر GitHub Actions. لتفعيل النشر الآلي، قم بإضافة المفاتيح (Secrets) اللازمة في إعدادات المستودع.
+
 ## Components
 
 1.  **Smart Contracts (`/contracts`)**:
@@ -20,6 +22,13 @@ This is a turnkey solution for building and testing Web3 Security Automation wit
 
 ### 1. Smart Contracts & Deployment
 
+#### GitHub Actions Automation
+This repository is configured to automatically run tests and deploy to Sepolia. To enable deployment, add the following to your **GitHub Repository Secrets**:
+- `PRIVATE_KEY`: Your deployment wallet private key.
+- `SEPOLIA_RPC_URL`: Your RPC provider URL (Alchemy, Infura, etc.).
+- `TRUSTED_FORWARDER` (Optional): Address of an existing forwarder.
+
+#### Manual Deployment
 1.  Install dependencies:
     ```bash
     npm install

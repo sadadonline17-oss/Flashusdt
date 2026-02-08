@@ -1,12 +1,15 @@
-name: Deploy to Sepolia
+name: Web3 Security CI/CD
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  deploy:
+  test-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,7 +24,11 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Deploy contract
+      - name: Run Smart Contract Tests
+        run: npx hardhat test
+
+      - name: Deploy to Sepolia
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.PRIVATE_KEY != ''
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
