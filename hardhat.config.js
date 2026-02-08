@@ -1,35 +1,56 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
+/**
+ * Helper to get environment variable or fallback, with trimming.
+ * If the environment variable is an empty string or only whitespace, it returns the fallback.
+ */
+const getEnv = (name, fallback = "") => {
+  const value = process.env[name];
+  if (value && typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : fallback;
+  }
+  return fallback;
+};
 
-// Simple validation to ensure the private key is a valid 64-character hex string (with or without 0x)
+const rawPrivateKey = getEnv("PRIVATE_KEY");
+
+/**
+ * Simple validation to ensure the private key is a valid 64-character hex string (with or without 0x)
+ */
 const isValidPrivateKey = (key) => {
   if (!key) return false;
   const cleanKey = key.startsWith("0x") ? key.slice(2) : key;
   return /^[0-9a-fA-F]{64}$/.test(cleanKey);
 };
 
-const accounts = isValidPrivateKey(PRIVATE_KEY) ? [PRIVATE_KEY.startsWith("0x") ? PRIVATE_KEY : `0x${PRIVATE_KEY}`] : [];
+const accounts = isValidPrivateKey(rawPrivateKey)
+  ? [rawPrivateKey.startsWith("0x") ? rawPrivateKey : `0x${rawPrivateKey}`]
+  : [];
+
+if (process.env.NODE_ENV !== 'test' && accounts.length === 0 && process.env.PRIVATE_KEY) {
+    console.warn("WARNING: PRIVATE_KEY was provided but appears to be invalid. It must be a 64-character hex string.");
+}
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.20",
   networks: {
     sepolia: {
-      url: process.env.SEPOLIA_RPC_URL || "https://rpc.sepolia.org",
+      url: getEnv("SEPOLIA_RPC_URL", "https://rpc.sepolia.org"),
       accounts: accounts,
     },
     bsc: {
-      url: process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org/",
+      url: getEnv("BSC_RPC_URL", "https://bsc-dataseed.binance.org/"),
       accounts: accounts,
     },
     polygon: {
-      url: process.env.POLYGON_RPC_URL || "https://polygon-rpc.com",
+      url: getEnv("POLYGON_RPC_URL", "https://polygon-rpc.com"),
       accounts: accounts,
     },
     base: {
-      url: process.env.BASE_RPC_URL || "https://mainnet.base.org",
+      url: getEnv("BASE_RPC_URL", "https://mainnet.base.org"),
       accounts: accounts,
     }
   },
