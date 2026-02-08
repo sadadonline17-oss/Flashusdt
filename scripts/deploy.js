@@ -1,7 +1,11 @@
 const hre = require("hardhat");
 
 async function main() {
-  const [deployer] = await hre.ethers.getSigners();
+  const signers = await hre.ethers.getSigners();
+  if (signers.length === 0) {
+    throw new Error("No deployment account found. Please check your PRIVATE_KEY in .env or GitHub Secrets.");
+  }
+  const [deployer] = signers;
   console.log("Deploying contracts with the account:", deployer.address);
 
   let trustedForwarder = process.env.TRUSTED_FORWARDER;
