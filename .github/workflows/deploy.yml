@@ -1,0 +1,33 @@
+name: Silent Deployment CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install
+      - name: Run Tests
+        run: npx hardhat test
+      - name: Deploy to Sepolia
+        env:
+          SEPOLIA_URL: ${{ secrets.SEPOLIA_URL }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        run: npx hardhat run scripts/deploy.js --network sepolia
+      - name: Commit updated contract files
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add frontend/src/contracts/*.json
+          git commit -m "Update contract address and ABI [skip ci]" || echo "No changes to commit"
+          git push
