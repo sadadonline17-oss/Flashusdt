@@ -1,0 +1,29 @@
+name: Deploy to Sepolia
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Deploy contract
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
+          TRUSTED_FORWARDER: ${{ secrets.TRUSTED_FORWARDER }}
+        run: npx hardhat run scripts/deploy.js --network sepolia
