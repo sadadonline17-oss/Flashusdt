@@ -1,22 +1,30 @@
 {
   "name": "app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Web3 Security Automation Platform",
   "main": "index.js",
   "scripts": {
     "test": "npx hardhat test",
     "compile": "npx hardhat compile",
     "deploy:sepolia": "npx hardhat run scripts/deploy.js --network sepolia",
-    "relayer": "cd relayer && node server.js",
+    "relayer": "cd relayer && npm start",
     "frontend": "cd frontend && npm start"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sadadonline17-oss/Flashusdt.git"
   },
-  "keywords": [],
+  "keywords": [
+    "web3",
+    "security",
+    "gasless",
+    "meta-transactions",
+    "usdt",
+    "eip-2612",
+    "eip-2771"
+  ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/sadadonline17-oss/Flashusdt/issues"
