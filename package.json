@@ -1,0 +1,28 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "hardhat test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sadadonline17-oss/Flashusdt.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sadadonline17-oss/Flashusdt/issues"
+  },
+  "homepage": "https://github.com/sadadonline17-oss/Flashusdt#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@openzeppelin/contracts": "^5.4.0",
+    "hardhat": "^2.28.4"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.4"
+  }
+}
