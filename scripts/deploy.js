@@ -12,7 +12,11 @@ async function main() {
 
   console.log("====================================================");
   console.log(`Starting deployment on network: ${networkName}`);
-  console.log("Deploying contracts with the account:", deployer.address);
+
+  // Mask the address for logging (show first 6 and last 4)
+  const addr = deployer.address;
+  const maskedAddr = addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
+  console.log("Deploying contracts with the account:", maskedAddr);
 
   // Basic balance check
   const balance = await hre.ethers.provider.getBalance(deployer.address);
@@ -44,7 +48,7 @@ async function main() {
   const tokenAddress = await token.getAddress();
   console.log("GlobalAssetUSDT (USDT Simulator) deployed to:", tokenAddress);
   console.log("Trusted Forwarder used:", trustedForwarder);
-  console.log("Initial supply minted to:", deployer.address);
+  console.log("Initial supply minted to:", maskedAddr);
   console.log("====================================================");
 
   // Export deployment info for the frontend and relayer
