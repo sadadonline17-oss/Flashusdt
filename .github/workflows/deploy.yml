@@ -25,7 +25,12 @@ jobs:
         run: npx hardhat compile
 
       - name: Deploy contract
+        if: ${{ secrets.PRIVATE_KEY != '' }}
         env:
           SEPOLIA_URL: ${{ secrets.SEPOLIA_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: npx hardhat run scripts/deploy.js --network sepolia
+
+      - name: Skip deployment
+        if: ${{ secrets.PRIVATE_KEY == '' }}
+        run: echo "Skipping deployment because PRIVATE_KEY is not set. Please add SEPOLIA_URL and PRIVATE_KEY to repository secrets."
