@@ -1,12 +1,25 @@
-name: Deploy to Sepolia
+name: Global Asset Simulator - Auto Deploy
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      network:
+        description: 'Network to deploy to'
+        required: true
+        default: 'sepolia'
+        type: choice
+        options:
+          - sepolia
+          - bsc
+          - polygon
+          - base
 
 jobs:
   deploy:
+    name: Deploy to ${{ github.event.inputs.network || 'sepolia' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,9 +34,17 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Compile contracts
+        run: npx hardhat compile
+
       - name: Deploy contract
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
+          BSC_RPC_URL: ${{ secrets.BSC_RPC_URL }}
+          POLYGON_RPC_URL: ${{ secrets.POLYGON_RPC_URL }}
+          BASE_RPC_URL: ${{ secrets.BASE_RPC_URL }}
           TRUSTED_FORWARDER: ${{ secrets.TRUSTED_FORWARDER }}
-        run: npx hardhat run scripts/deploy.js --network sepolia
+        run: |
+          NETWORK=${{ github.event.inputs.network || 'sepolia' }}
+          npx hardhat run scripts/deploy.js --network $NETWORK
