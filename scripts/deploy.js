@@ -14,12 +14,13 @@ async function main() {
   console.log(`Starting deployment on network: ${networkName}`);
 
   // Mask the address for logging (show first 6 and last 4)
-  const addr = deployer.address;
+  // We use getAddress to ensure it is in a standard checksum format
+  const addr = hre.ethers.getAddress(deployer.address);
   const maskedAddr = addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
   console.log("Deploying contracts with the account:", maskedAddr);
 
   // Basic balance check
-  const balance = await hre.ethers.provider.getBalance(deployer.address);
+  const balance = await hre.ethers.provider.getBalance(addr);
   console.log("Account balance:", hre.ethers.formatEther(balance), "ETH");
 
   if (balance === 0n && networkName !== "hardhat" && networkName !== "localhost") {
